@@ -17,16 +17,16 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "61568791604271",
-    "9806523922789501"
+    "61577859579154",
+    ""
   ],
   "whiteListMode": {
     "enable": false,
     "whiteListIds": [],
     "notes": "if you enable this feature, only the ids in the whiteListIds section can use the bot"
   },
-  "nickNameBot": "bot",
-  "prefix": "/",
+  "nickNameBot": "kiyotaka Ayanokōji Camille",
+  "prefix": "@",
   "database": {
     "type": "sqlite",
     "uriMongodb": "",
