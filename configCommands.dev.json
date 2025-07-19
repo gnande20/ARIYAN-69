@@ -1,39 +1,31 @@
-{
-  "commandBanned": {},
-  "envGlobal": {
-    "weatherApiKey": "d7e795ae6a0d44aaa8abb1a0a7ac19e4",
-    "goatbotApikey": ""
+module.exports = {
+  config: {
+    nom: "callad",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Mentionne tous les admins du groupe",
+    utilisation: "/callad",
+    permissions: [0],
+    prefixe: true
   },
-  "envCommands": {
-    "daily": {
-      "rewardDay1": {
-        "coin": 100,
-        "exp": 10
-      },
-      "rewardFirstDay": {
-        "coin": 100,
-        "exp": 10
+
+  onStart: async function ({ message, event, api }) {
+    const info = await api.getThreadInfo(event.threadID);
+    const adminIDs = info.adminIDs.map(e => e.id);
+    const mentions = [];
+    let texte = "📢 | Appel des administrateurs :\n\n";
+
+    for (const user of info.userInfo) {
+      if (adminIDs.includes(user.id) && user.id !== api.getCurrentUserID()) {
+        mentions.push({ tag: user.name, id: user.id });
+        texte += `👮 ${user.name}\n`;
       }
-    },
-    "notification": {
-      "delayPerGroup": 250
-    },
-    "rank": {
-      "deltaNext": 5
-    },
-    "rankup": {
-      "deltaNext": 5
-    },
-    "appstore": {
-      "limitResult": 3
-    },
-    "dhbc": {
-      "reward": 1000
     }
-  },
-  "envEvents": {
-    "logsbot": {
-      "allow": true
+
+    if (mentions.length === 0) {
+      return message.reply("❌ | Aucun administrateur trouvé dans ce groupe.");
     }
+
+    return message.reply({ body: texte, mentions });
   }
-}
+};
