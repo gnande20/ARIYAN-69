@@ -1,39 +1,118 @@
-{
-  "commandBanned": {},
-  "envGlobal": {
-    "weatherApiKey": "d7e795ae6a0d44aaa8abb1a0a7ac19e4",
-    "goatbotApikey": ""
+module.exports = {
+  config: {
+    nom: "ban",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Bannir un utilisateur du bot",
+    utilisation: "/ban @mention",
+    permissions: [1]
   },
-  "envCommands": {
-    "daily": {
-      "rewardDay1": {
-        "coin": 100,
-        "exp": 10
-      },
-      "rewardFirstDay": {
-        "coin": 100,
-        "exp": 10
-      }
-    },
-    "notification": {
-      "delayPerGroup": 250
-    },
-    "rank": {
-      "deltaNext": 5
-    },
-    "rankup": {
-      "deltaNext": 5
-    },
-    "appstore": {
-      "limitResult": 3
-    },
-    "dhbc": {
-      "reward": 1000
-    }
-  },
-  "envEvents": {
-    "logsbot": {
-      "allow": true
-    }
+
+  onCall: async ({ message, event, args, usersData }) => {
+    const mentionID = Object.keys(event.mentions)[0];
+    if (!mentionID) return message.reply("❌ Mentionne un utilisateur à bannir.");
+
+    const userData = await usersData.get(mentionID);
+    userData.banned = true;
+    await usersData.set(mentionID, userData);
+
+    message.reply(`🚫 Utilisateur banni avec succès.`);
   }
-}
+};module.exports = {
+  config: {
+    nom: "unban",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Débannir un utilisateur",
+    utilisation: "/unban @mention",
+    permissions: [1]
+  },
+
+  onCall: async ({ message, event, args, usersData }) => {
+    const mentionID = Object.keys(event.mentions)[0];
+    if (!mentionID) return message.reply("❌ Mentionne un utilisateur à débannir.");
+
+    const userData = await usersData.get(mentionID);
+    userData.banned = false;
+    await usersData.set(mentionID, userData);
+
+    message.reply(`✅ Utilisateur débanni.`);
+  }
+};module.exports = {
+  config: {
+    nom: "casino",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Joue au casino 🎰",
+    utilisation: "/casino <mise>",
+    permissions: [0]
+  },
+
+  onCall: async ({ message, args, event, usersData }) => {
+    const bet = parseInt(args[0]);
+    if (isNaN(bet) || bet <= 0) return message.reply("💸 Mise invalide.");
+
+    const user = await usersData.get(event.senderID);
+    if (user.money < bet) return message.reply("❌ Tu n'as pas assez de coins.");
+
+    const win = Math.random() < 0.4; // 40% de chance
+    const gain = win ? bet * 2 : -bet;
+
+    user.money += gain;
+    await usersData.set(event.senderID, user);
+
+    return message.reply(win
+      ? `🎉 Tu as gagné ${bet * 2} 💰 !`
+      : `😢 Tu as perdu ${bet} 💰. Bonne chance la prochaine fois !`);
+  }
+};module.exports = {
+  config: {
+    nom: "8ball",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Pose une question à la boule magique",
+    utilisation: "/8ball <question>",
+    permissions: [0]
+  },
+
+  onCall: async ({ message, args }) => {
+    if (args.length < 1) return message.reply("❓ Pose une question.");
+
+    const responses = [
+      "Oui", "Non", "Peut-être", "Certainement", "Jamais", "Repose ta question"
+    ];
+
+    return message.reply(`🎱 ${responses[Math.floor(Math.random() * responses.length)]}`);
+  }
+};module.exports = {
+  config: {
+    nom: "love",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Calcule le taux d’amour entre deux personnes",
+    utilisation: "/love @user",
+    permissions: [0]
+  },
+
+  onCall: async ({ message, event }) => {
+    const mentionID = Object.keys(event.mentions)[0];
+    if (!mentionID) return message.reply("💑 Mentionne quelqu’un pour tester l’amour.");
+
+    const love = Math.floor(Math.random() * 101);
+    return message.reply(`❤️ Taux d’amour : ${love}% entre vous deux !`);
+  }
+};module.exports = {
+  config: {
+    nom: "help",
+    version: "1.0",
+    auteur: "Gnande",
+    description: "Affiche la liste des commandes",
+    utilisation: "/help",
+    permissions: [0]
+  },
+
+  onCall: async ({ message, commands }) => {
+    const list = commands.map(cmd => `✦ /${cmd.config.nom} – ${cmd.config.description}`).join("\n");
+    return message.reply(`╔═━「 𝐇𝐄𝐋𝐏 」━═╗\n${list}\n╚═━「 🔑 Prefix: / 」━═╝`);
+  }
+};
