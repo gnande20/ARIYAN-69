@@ -25,8 +25,8 @@
     "whiteListIds": [],
     "notes": "if you enable this feature, only the ids in the whiteListIds section can use the bot"
   },
-  "nickNameBot": "kiyotaka Ayanokōji Camille",
-  "prefix": "/",
+  "nickNameBot": "Masahika kuze",
+  "prefix": "@",
   "database": {
     "type": "sqlite",
     "uriMongodb": "",
